@@ -1,11 +1,13 @@
 import {LinkList} from "./link.js";
 
 function hashMap () {
-    const buckets = [];
-    const keyStorage = [];
-    const keyValuePair = [];
+    let buckets = [];
+    let keyStorage = [];
+    let keyValuePair = [];
 
-    let numBuckets = 16;
+    let numBuckets = 2;
+    let growthFactor = 0.8;
+    let numElements = 1;
 
     for (let i=0; i<numBuckets; i++) {
       buckets[i] = new LinkList();
@@ -17,7 +19,7 @@ function hashMap () {
            
         const primeNumber = 31;
         for (let i = 0; i < key.length; i++) {
-          hashCode = (primeNumber * hashCode + key.charCodeAt(i))%16;
+          hashCode = (primeNumber * hashCode + key.charCodeAt(i))%numBuckets;
         };
      
         return hashCode;
@@ -38,6 +40,24 @@ function hashMap () {
       }
       
       function set (key, value) {
+
+        if (numElements*growthFactor >= numBuckets) {
+          numBuckets += 16;
+          buckets = [];
+          keyStorage = [];
+          for (let i=0; i<numBuckets; i++) {
+            buckets[i] = new LinkList();
+            keyStorage[i] = [];
+          };
+
+          keyValuePair.forEach((pair)=> {
+            const hashCode = hash(pair[0]);
+            const linkList = buckets[hashCode]
+            linkList.append(pair[1]);
+            keyStorage[hashCode].push(pair[0]);
+          });
+        };
+
         const hashCode = hash(key);
         let keyExisits = false;
         let linkIndex;
@@ -61,7 +81,9 @@ function hashMap () {
           linkList.append(value);
           keyStorage[hashCode].push(key);
           keyValuePair.push([key, value]);
+          numElements += 1;
         };
+
       };
 
       function get (key) {
@@ -164,14 +186,11 @@ function hashMap () {
         return values;
       };
 
+      function entries () {
+        return keyValuePair;
+      }
+
 
      
-      return {buckets, keyStorage, keyValuePair, set, get, has, remove, length, clears, keys, values};
+      return {set, get, has, remove, length, clears, keys, values, entries};
 };
-
-const mapOne = hashMap();
-mapOne.set("poop", "dog");
-mapOne.set("skillzz", "first");
-mapOne.set("skill", "firsth");
-mapOne.set("poop", "cat");
-console.log(mapOne.keys(), mapOne.values());
