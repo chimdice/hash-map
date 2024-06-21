@@ -3,6 +3,8 @@ import {LinkList} from "./link.js";
 function hashMap () {
     const buckets = [];
     const keyStorage = [];
+    const keyValuePair = [];
+
     let numBuckets = 16;
 
     for (let i=0; i<numBuckets; i++) {
@@ -20,6 +22,20 @@ function hashMap () {
      
         return hashCode;
       };
+
+      function indexKeyPair (key, value) {
+        let idx;
+        let count = 0
+        keyValuePair.forEach((keyValue) => {
+          if ((key === keyValue[0]) && (value === keyValue[1])) {
+            idx = count;
+          };
+
+          count += 1
+        });
+
+        return idx;
+      }
       
       function set (key, value) {
         const hashCode = hash(key);
@@ -37,10 +53,14 @@ function hashMap () {
 
         if (keyExisits) {
           const node = linkList.at(linkIndex);
+          
+          const keyId = indexKeyPair(key, node.value);
+          keyValuePair[keyId][1] = value;
           node.value = value;
         } else {
           linkList.append(value);
           keyStorage[hashCode].push(key);
+          keyValuePair.push([key, value]);
         };
       };
 
@@ -95,21 +115,45 @@ function hashMap () {
         const linkList = buckets[hashCode]
 
         if (keyExisits) {
+          const value = linkList.at(linkIndex).value;
           linkList.removeAt(linkIndex);
           keyStorage[hashCode].splice(linkIndex, 1);
+
+          const keyId = indexKeyPair(key, value);
+          console.log([key, value]);
+          keyValuePair.splice(keyId, 1);
+
           return keyExisits
         } else {
           return keyExisits;
         };
-      }
+      };
+
+      function length () {
+        return keyValuePair.length;
+      };
+
+      function clears () {
+        buckets = [];
+        keyStorage = [];
+        keyValuePair = [];
+
+        for (let i=0; i<numBuckets; i++) {
+          buckets[i] = new LinkList();
+          keyStorage[i] = [];
+        };
+      };
+
+      
      
-      return {buckets, keyStorage, set, get, has, remove};
+      return {buckets, keyStorage, keyValuePair, set, get, has, remove, length, clears};
 };
 
 const mapOne = hashMap();
 mapOne.set("poop", "dog");
 mapOne.set("skillzz", "first");
-mapOne.set("skill", "first");
-
+mapOne.set("skill", "firsth");
+console.log(mapOne.keyValuePair);
 console.log(mapOne.remove("skillzz"));
-console.log(mapOne.keyStorage);
+mapOne.set("poop", "cat");
+console.log(mapOne.keyStorage, mapOne.buckets[1]);
