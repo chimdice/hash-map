@@ -144,7 +144,8 @@ function hashMap () {
           const keyId = indexKeyPair(key, value);
           console.log([key, value]);
           keyValuePair.splice(keyId, 1);
-
+          numElements -= 1;
+          
           return keyExisits
         } else {
           return keyExisits;
@@ -164,6 +165,9 @@ function hashMap () {
           buckets[i] = new LinkList();
           keyStorage[i] = [];
         };
+
+        numElements = 1;
+        
       };
 
       function keys () {
