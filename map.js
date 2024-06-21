@@ -144,16 +144,34 @@ function hashMap () {
         };
       };
 
-      
+      function keys () {
+        const keys = [];
+
+        keyValuePair.forEach((pair) => {
+          keys.push(pair[0]);
+        });
+
+        return keys;
+      };
+
+      function values () {
+        const values = [];
+
+        keyValuePair.forEach((pair) => {
+          values.push(pair[1]);
+        });
+
+        return values;
+      };
+
+
      
-      return {buckets, keyStorage, keyValuePair, set, get, has, remove, length, clears};
+      return {buckets, keyStorage, keyValuePair, set, get, has, remove, length, clears, keys, values};
 };
 
 const mapOne = hashMap();
 mapOne.set("poop", "dog");
 mapOne.set("skillzz", "first");
 mapOne.set("skill", "firsth");
-console.log(mapOne.keyValuePair);
-console.log(mapOne.remove("skillzz"));
 mapOne.set("poop", "cat");
-console.log(mapOne.keyStorage, mapOne.buckets[1]);
+console.log(mapOne.keys(), mapOne.values());
